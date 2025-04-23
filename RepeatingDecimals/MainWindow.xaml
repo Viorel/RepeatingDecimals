@@ -11,7 +11,7 @@
         Loaded="Window_Loaded" 
         Closing="Window_Closing"
         >
-    <Grid>
+    <Grid Margin="8">
         <local:UCRepeatingDecimals x:Name="ucRepeatingDecimals" />
 
     </Grid>

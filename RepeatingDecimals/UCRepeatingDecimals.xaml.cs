@@ -163,13 +163,13 @@ namespace RepeatingDecimals
             {
                 StopThread( );
 
-                Fraction? fraction = GetInputNumber( );
-                if( fraction == null ) return;
+                Input? input = GetInput( );
+                if( input == null ) return;
 
                 mLastCancellable = new SimpleCancellable( );
                 mCalculationThread = new Thread( ( ) =>
                 {
-                    CalculationThreadProc( mLastCancellable, fraction );
+                    CalculationThreadProc( mLastCancellable, input );
                 } )
                 {
                     IsBackground = true,
@@ -189,7 +189,16 @@ namespace RepeatingDecimals
             }
         }
 
-        Fraction? GetInputNumber( )
+        class Input
+        {
+            // one of:
+            public Fraction? mFraction;
+            // or
+            public IReadOnlyList<BigInteger>? mContinuedFractionItems;
+            public bool mIsContinuedFractionNegative;
+        }
+
+        Input? GetInput( )
         {
             string input_text = textBoxInput.Text;
 
@@ -203,10 +212,12 @@ namespace RepeatingDecimals
 
             // TODO: trim insignificant zeroes (in Regex)
 
-            Match m = RegexToParseNumber( ).Match( input_text );
+            Match m = RegexToParseInput( ).Match( input_text );
 
             if( m.Groups["integer"].Success )
             {
+                // decimal
+
                 bool is_negative = m.Groups["negative"].Success;
                 bool is_exponent_negative = m.Groups["negative_exponent"].Success;
                 Group floating_group = m.Groups["floating"];
@@ -242,7 +253,7 @@ namespace RepeatingDecimals
 
                         Fraction fraction = new( is_negative ? -nominator : nominator, denominator, exponent );
 
-                        return fraction;
+                        return new Input { mFraction = fraction };
                     }
                     else
                     {
@@ -253,7 +264,7 @@ namespace RepeatingDecimals
 
                         Fraction fraction = new( is_negative ? -significant : significant, BigInteger.One, adjusted_exponent );
 
-                        return fraction;
+                        return new Input { mFraction = fraction };
                     }
                 }
                 else
@@ -262,12 +273,14 @@ namespace RepeatingDecimals
 
                     Fraction fraction = new( is_negative ? -integer : integer, BigInteger.One, exponent );
 
-                    return fraction;
+                    return new Input { mFraction = fraction };
                 }
             }
 
             if( m.Groups["nominator"].Success )
             {
+                // rational
+
                 bool is_negative = m.Groups["negative"].Success;
                 bool is_exponent_negative = m.Groups["negative_exponent"].Success;
                 Group denominator_group = m.Groups["denominator"];
@@ -303,17 +316,41 @@ namespace RepeatingDecimals
                     }
                 }
 
-                return fraction;
+                return new Input { mFraction = fraction };
+            }
+
+            if( m.Groups["first"].Success )
+            {
+                // continued fraction
+
+                bool is_negative = m.Groups["negative"].Success;
+                BigInteger first = BigInteger.Parse( m.Groups["first"].Value );
+
+                List<BigInteger> list = [first];
+
+                Group next_group = m.Groups["next"];
+
+                if( next_group.Success )
+                {
+                    foreach( Capture c in next_group.Captures )
+                    {
+                        BigInteger item = BigInteger.Parse( c.Value );
+
+                        list.Add( item );
+                    }
+                }
+
+                return new Input { mContinuedFractionItems = list, mIsContinuedFractionNegative = is_negative };
             }
 
             if( m.Groups["pi"].Success )
             {
-                return Fraction.Pi;
+                return new Input { mFraction = Fraction.Pi };
             }
 
             if( m.Groups["e"].Success )
             {
-                return Fraction.EulerNumber;
+                return new Input { mFraction = Fraction.EulerNumber };
             }
 
             ShowOneRichTextBox( richTextBoxTypicalError );
@@ -323,10 +360,35 @@ namespace RepeatingDecimals
         }
 
 
-        void CalculationThreadProc( ICancellable cnc, Fraction fraction )
+        void CalculationThreadProc( ICancellable cnc, Input input )
         {
             try
             {
+                Fraction fraction;
+
+                if( input.mFraction != null )
+                {
+                    fraction = input.mFraction;
+                }
+                else if( input.mContinuedFractionItems != null )
+                {
+                    var p =
+                        ContinuedFractionUtilities
+                            .EnumerateContinuedFractionConvergents( input.mContinuedFractionItems )
+                            .Last( );
+
+                    fraction = p.d.IsZero ? p.n < 0 ? Fraction.NegativeInfinity : p.n > 0 ? Fraction.PositiveInfinity : Fraction.Undefined
+                               : new Fraction( p.d < 0 ? -p.n : p.n, BigInteger.Abs( p.d ) );
+
+                    CalculationContext ctx = new( cnc, 33 );
+
+                    if( input.mIsContinuedFractionNegative ) fraction = Fraction.Neg( fraction, ctx );
+                }
+                else
+                {
+                    throw new InvalidOperationException( );
+                }
+
                 if( !fraction.IsNormal )
                 {
                     ShowResults( cnc, fraction );
@@ -509,27 +571,34 @@ namespace RepeatingDecimals
         [GeneratedRegex( """
             (?xni)^ \s* 
             (
-             (
-              (\+|(?<negative>-))? \s* (?<integer>\d+) 
-              ((\s* \. \s* (?<floating>\d+)) | \.)? 
-              (\s* \( \s* (?<repeating>\d+) \s* \) )? 
-              (\s* [eE] \s* (\+|(?<negative_exponent>-))? \s* (?<exponent>\d+))? 
-             )
+              ( # decimal
+                (\+|(?<negative>-))? \s* (?<integer>\d+) 
+                ((\s* \. \s* (?<floating>\d+)) | \.)? 
+                (\s* \( \s* (?<repeating>\d+) \s* \) )? 
+                (\s* [eE] \s* (\+|(?<negative_exponent>-))? \s* (?<exponent>\d+))? 
+              )
             |
-             (
-              (\+|(?<negative>-))? \s* (?<nominator>\d+) 
-              (\s* [eE] \s* (\+|(?<negative_exponent>-))? \s* (?<exponent>\d+))? 
-              \s* / \s*
-              (?<denominator>\d+) 
-             )
+              ( # rational
+                (\+|(?<negative>-))? \s* (?<nominator>\d+) 
+                (\s* [eE] \s* (\+|(?<negative_exponent>-))? \s* (?<exponent>\d+))? 
+                \s* / \s*
+                (?<denominator>\d+) 
+              )
             |
-             (?<pi>pi | π)
+              ( # continued fraction
+                (\+|(?<negative>-))? \s*
+                \[
+                \s* (?<first>[\-\+]?\d+)(\s*[;,\s]\s*(?<next>[\-\+]?\d+))* \s*
+                \]?
+              )
             |
-             (?<e>e)
-                        )
+              (?<pi>pi | π)
+            |
+              (?<e>e) 
+            )
             \s* $
             """, RegexOptions.IgnorePatternWhitespace
         )]
-        private static partial Regex RegexToParseNumber( );
+        private static partial Regex RegexToParseInput( );
     }
 }

@@ -16,7 +16,8 @@
 
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0 0 0 10">
             <Label Content="Number:" Padding="0" Margin="0 0 0 4"/>
-            <TextBox x:Name="textBoxInput" TextChanged="textBoxInput_TextChanged" SelectionChanged="textBoxInput_SelectionChanged" d:Text="12.3(45)"/>
+            <TextBox x:Name="textBoxInput" Padding="0 3" FontWeight="Bold"
+                     TextChanged="textBoxInput_TextChanged" SelectionChanged="textBoxInput_SelectionChanged" d:Text="12.3(45)"/>
             <TextBlock Padding="0" Margin="0 2" FontStyle="Italic">
                 Examples: 12.3(45), 123/456
             </TextBlock>
@@ -27,7 +28,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="Results:" Padding="0 0 0 4"/>
+            <Label Grid.Row="0" Content="Results:" Padding="0 4 0 4"/>
 
             <RichTextBox x:Name="richTextBoxNote" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" FontSize="14" 
                          d:Visibility="Hidden">
@@ -102,7 +103,7 @@
                 </FlowDocument>
             </RichTextBox>
 
-            <Label x:Name="labelPleaseWait" Grid.Row="1" Content="Calculation in progress... " VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+            <Label x:Name="labelPleaseWait" Grid.Row="1" Content="&#x23F3; Calculation in progress... " VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                    BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0.75" 
                    Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"
                    Visibility="Hidden" d:Visibility="Visible"/>
