@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RepeatingDecimals"
         mc:Ignorable="d"
-        Title="MainWindow" 
+        Title="Repeating Decilams" 
         Width="800" Height="494" d:Width="800" d:Height="494"
         SourceInitialized="Window_SourceInitialized"
         Loaded="Window_Loaded" 
