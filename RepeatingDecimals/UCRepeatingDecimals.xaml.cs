@@ -26,6 +26,8 @@ namespace RepeatingDecimals
     /// </summary>
     public partial class UCRepeatingDecimals : UserControl
     {
+        const int MAX_OUTPUT_DIGITS_DECIMAL = 250000; // (for example, the period of 6918696/2996677 has 241665 digits)
+        const int MAX_OUTPUT_DIGITS_FRACTION = 200;
         const int MAX_BIGINTEGER_BYTE_SIZE = 128;
         readonly TimeSpan DELAY_BEFORE_CALCULATION = TimeSpan.FromMilliseconds( 444 );
         readonly TimeSpan DELAY_BEFORE_PROGRESS = TimeSpan.FromMilliseconds( 455 ); // (must be greater than 'DELAY_BEFORE_CALCULATION')
@@ -422,25 +424,12 @@ namespace RepeatingDecimals
 
         void ShowResults( ICancellable cnc, Fraction initialFraction )
         {
-            string as_decimal = initialFraction.ToFloatString( cnc, 100 );
+            string as_decimal = initialFraction.ToFloatString( cnc, MAX_OUTPUT_DIGITS_DECIMAL );
 
-            bool is_repeating = as_decimal.Contains( '(' );
+            bool is_decimal_approx = as_decimal.StartsWith( '≈' );
+            //bool is_repeating = as_decimal.Contains( '(' );
 
-            if( !is_repeating )
-            {
-                as_decimal = initialFraction.ToFloatString( cnc, 30 );
-            }
-
-            string as_fraction;
-
-            if( !is_repeating )
-            {
-                as_fraction = initialFraction.ToRationalString( cnc, 30 );
-            }
-            else
-            {
-                as_fraction = initialFraction.ToRationalString( cnc, 100 );
-            }
+            string as_fraction = initialFraction.ToRationalString( cnc, MAX_OUTPUT_DIGITS_FRACTION );
 
             //as_decimal = as_decimal.Replace( ".", ".\u2060" ); // (do not break after '.')
 
@@ -449,6 +438,24 @@ namespace RepeatingDecimals
                 runDecimal.Text = as_decimal;
                 runFraction.Text = as_fraction;
 
+                if( is_decimal_approx )
+                {
+                    runNote.Text = "⚠️ The period is too long.";
+                }
+                else
+                {
+                    runNote.Text = "";
+                }
+
+                {
+                    // adjust page width to avoid wrapping
+
+                    string text = new TextRange( richTextBoxResults.Document.ContentStart, richTextBoxResults.Document.ContentEnd ).Text;
+                    FormattedText ft = new( text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                        new Typeface( richTextBoxResults.FontFamily, richTextBoxResults.FontStyle, richTextBoxResults.FontWeight, richTextBoxResults.FontStretch ), richTextBoxResults.FontSize, Brushes.Black, VisualTreeHelper.GetDpi( richTextBoxResults ).PixelsPerDip );
+
+                    richTextBoxResults.Document.PageWidth = ft.Width + 100;
+                }
                 ShowOneRichTextBox( richTextBoxResults );
             } );
         }
