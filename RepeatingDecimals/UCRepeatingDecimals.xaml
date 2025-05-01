@@ -16,8 +16,10 @@
 
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0 0 0 10">
             <Label Content="Number:" Padding="0" Margin="0 0 0 4"/>
-            <TextBox x:Name="textBoxInput" Padding="1 3" FontSize="22"
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Height="38">
+                <TextBox x:Name="textBoxInput" Padding="1 3" FontSize="22" VerticalContentAlignment="Center"
                      TextChanged="textBoxInput_TextChanged" SelectionChanged="textBoxInput_SelectionChanged" d:Text="12.3(45)"/>
+            </ScrollViewer>
             <TextBlock Padding="0" Margin="0 2" >
                 <Italic>Examples:</Italic> 12.3(45), 123/456, [1;2,3,4]
             </TextBlock>
@@ -71,7 +73,8 @@
                 </FlowDocument>
             </RichTextBox>
 
-            <RichTextBox x:Name="richTextBoxResults" Grid.Row="1" Padding="4 8 2 2" IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto" d:Visibility="Visible" >
+            <RichTextBox x:Name="richTextBoxResults" Grid.Row="1" Padding="4 8 2 2" IsReadOnly="True" IsReadOnlyCaretVisible="True" 
+                          FontSize="18" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" d:Visibility="Visible" >
                 <RichTextBox.Resources>
                     <Style TargetType="Paragraph">
                         <Setter Property="Margin" Value="4"/>
@@ -79,26 +82,32 @@
                     </Style>
                 </RichTextBox.Resources>
                 <FlowDocument>
-                    <Section x:Name="sectionFraction" Padding="0 1 0 0" Margin="0">
+                    <Section x:Name="sectionFraction" Padding="0 1 0 0" Margin="0" >
                         <Paragraph>
-                            <Run Text="Rational" FontWeight="Bold"/>
+                            <Run Text="Rational" FontSize="12" FontWeight="Bold"/>
                         </Paragraph>
                         <Section Padding="12 0">
                             <Paragraph Padding="0" Margin="0">
-                                <Run x:Name="runFraction" FontSize="18" d:Text="12 / 345"/>
+                                <Run x:Name="runFraction" d:Text="12 / 345"/>
                             </Paragraph>
                         </Section>
                     </Section>
 
                     <Section x:Name="sectionDecimal" Padding="0 1 0 0" Margin="0">
                         <Paragraph>
-                            <Run Text="Decimal" FontWeight="Bold"/>
+                            <Run Text="Decimal" FontSize="12" FontWeight="Bold"/>
                         </Paragraph>
                         <Section Padding="12 0">
                             <Paragraph Padding="0" Margin="0">
-                                <Run x:Name="runDecimal" FontSize="18" d:Text="12.345"/>
+                                <Run x:Name="runDecimal" d:Text="12.345"/>
                             </Paragraph>
                         </Section>
+                    </Section>
+
+                    <Section Padding="0 1 0 0" Margin="0 6 0 0" FontSize="14">
+                        <Paragraph Padding="0 4" Margin="12 0" >
+                            <Run x:Name="runNote" d:Text="⚠️ The period is too long."/>
+                        </Paragraph>
                     </Section>
                 </FlowDocument>
             </RichTextBox>
