@@ -275,7 +275,7 @@ namespace RepeatingDecimalsLibrary
                 for( int i = 0; r != 0 && i < allowed_space; ++i )
                 {
                     cnc.TryThrow( );
-                    remainders.Add( r, 0 );
+                    remainders.Add( r, i );
 
                     (BigInteger qf, r) = BigInteger.DivRem( r * Bi10, d );
 

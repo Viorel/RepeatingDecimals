@@ -28,7 +28,6 @@ namespace RepeatingDecimals
     {
         const int MAX_OUTPUT_DIGITS_DECIMAL = 250000; // (for example, the period of 6918696/2996677 has 241665 digits)
         const int MAX_OUTPUT_DIGITS_FRACTION = 200;
-        const int MAX_BIGINTEGER_BYTE_SIZE = 128;
         readonly TimeSpan DELAY_BEFORE_CALCULATION = TimeSpan.FromMilliseconds( 444 );
         readonly TimeSpan DELAY_BEFORE_PROGRESS = TimeSpan.FromMilliseconds( 455 ); // (must be greater than 'DELAY_BEFORE_CALCULATION')
         readonly TimeSpan MIN_DURATION_PROGRESS = TimeSpan.FromMilliseconds( 444 );
@@ -456,6 +455,7 @@ namespace RepeatingDecimals
 
                     richTextBoxResults.Document.PageWidth = ft.Width + 100;
                 }
+
                 ShowOneRichTextBox( richTextBoxResults );
             } );
         }
