@@ -21,7 +21,7 @@
                      TextChanged="textBoxInput_TextChanged" SelectionChanged="textBoxInput_SelectionChanged" d:Text="12.3(45)"/>
             </ScrollViewer>
             <TextBlock Padding="0" Margin="0 2" >
-                <Italic>Examples:</Italic> 12.3(45), 123/456, [1;2,3,4]
+                <Italic>Examples:</Italic> 12.3(45), 123/456<!--, [1;2,3,4]-->
             </TextBlock>
         </StackPanel>
         <Grid Grid.Row="1">
@@ -50,7 +50,7 @@
                         <Run FontWeight="Bold" Text="⚠ The value is invalid."/>
                     </Paragraph>
                     <Paragraph>
-                        <Run Text="Please enter a decimal number or fraction. For example:"/>
+                        <Run Text="Please enter a decimal or rational number. For example:"/>
                     </Paragraph>
                     <Paragraph Margin="14 0" FontWeight="Bold">
                         <Run Text="12.3(45)"/>
