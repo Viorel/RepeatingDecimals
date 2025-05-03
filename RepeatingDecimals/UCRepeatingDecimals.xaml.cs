@@ -426,10 +426,19 @@ namespace RepeatingDecimals
             string as_decimal = initialFraction.ToFloatString( cnc, MAX_OUTPUT_DIGITS_DECIMAL );
 
             bool is_decimal_approx = as_decimal.StartsWith( '≈' );
-            //bool is_repeating = as_decimal.Contains( '(' );
+            int period = 0;
+            {
+                int left_par = as_decimal.IndexOf( '(' );
+                int right_par = as_decimal.IndexOf( ')' );
+                if( left_par > 0 && right_par > left_par )
+                {
+                    period = right_par - left_par - 1;
+                }
+            }
+            bool is_repeating = as_decimal.Contains( '(' );
 
             string as_fraction = initialFraction.ToRationalString( cnc, MAX_OUTPUT_DIGITS_FRACTION );
-
+            as_fraction = Regex.Replace( as_fraction, @"\s*/\s*", " / " );
             //as_decimal = as_decimal.Replace( ".", ".\u2060" ); // (do not break after '.')
 
             Dispatcher.BeginInvoke( ( ) =>
@@ -443,7 +452,18 @@ namespace RepeatingDecimals
                 }
                 else
                 {
-                    runNote.Text = "";
+                    switch( period )
+                    {
+                    case 0:
+                        runNote.Text = "Not a repeating decimal.";
+                        break;
+                    case > 0:
+                        runNote.Text = $"The period is {period}.";
+                        break;
+                    default:
+                        runNote.Text = ""; //
+                        break;
+                    }
                 }
 
                 {

@@ -104,7 +104,7 @@
                         </Section>
                     </Section>
 
-                    <Section Padding="0 1 0 0" Margin="0 6 0 0" FontSize="14">
+                    <Section Padding="0 1 0 0" Margin="0 0 0 0" FontSize="14">
                         <Paragraph Padding="0 4" Margin="12 0" >
                             <Run x:Name="runNote" d:Text="⚠️ The period is too long."/>
                         </Paragraph>
