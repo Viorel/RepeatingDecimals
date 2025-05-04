@@ -46,6 +46,10 @@ namespace RepeatingDecimals
         {
             InitializeComponent( );
 
+            richTextBoxError.Visibility = Visibility.Hidden;
+            richTextBoxNote.Visibility = Visibility.Visible;
+            richTextBoxResults.Visibility = Visibility.Hidden;
+            richTextBoxTypicalError.Visibility = Visibility.Hidden;
             labelPleaseWait.Visibility = Visibility.Hidden;
 
             mCalculationTimer = new DispatcherTimer
