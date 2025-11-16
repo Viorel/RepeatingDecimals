@@ -21,4 +21,4 @@ The program runs in this environment:
 
 Download and unzip the latest archive from the **Releases** section. Launch the **RepeatingDecimals** executable.
 
-The source files can be compiled with Visual Studio 2022. The program is made in C#, WPF.
+The source files can be compiled with Visual Studio 2026. The program is made in C#, WPF.

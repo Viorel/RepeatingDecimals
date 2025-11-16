@@ -52,10 +52,12 @@
                     <Paragraph>
                         <Run Text="Please enter a decimal or rational number. For example:"/>
                     </Paragraph>
-                    <Paragraph Margin="14 0" FontWeight="Bold">
-                        <Run Text="12.3(45)"/>
+                    <Paragraph Margin="0">
+                        <Run Text="   12.3(45)" FontWeight="Bold"/>
                         <LineBreak/>
-                        <Run Text="123/45"/>
+                        <Run Text="or"/>
+                        <LineBreak/>
+                        <Run Text="   123/45" FontWeight="Bold"/>
                         <LineBreak/>
                     </Paragraph>
                 </FlowDocument>
@@ -74,7 +76,8 @@
             </RichTextBox>
 
             <RichTextBox x:Name="richTextBoxResults" Grid.Row="1" Padding="4 8 2 2" IsReadOnly="True" IsReadOnlyCaretVisible="True" 
-                          FontSize="18" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" d:Visibility="Visible" >
+                          FontSize="18" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                         d:Visibility="Visible" >
                 <RichTextBox.Resources>
                     <Style TargetType="Paragraph">
                         <Setter Property="Margin" Value="4"/>
