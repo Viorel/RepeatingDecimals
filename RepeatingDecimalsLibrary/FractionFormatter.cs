@@ -813,7 +813,7 @@ namespace RepeatingDecimalsLibrary
 \s*$
 ";
 
-        [GeneratedRegex( ParserPattern, RegexOptions.IgnorePatternWhitespace )]
+        [GeneratedRegex( ParserPattern, RegexOptions.IgnorePatternWhitespace, 20_000 )]
         private static partial Regex ParserRegex( );
     }
 }
